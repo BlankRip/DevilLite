@@ -1,8 +1,6 @@
 class ATopDownCharacter: ACharacter
 {
-    UPROPERTY()
-    UNiagaraSystem cursorClickFX;
-
+    
     UFUNCTION()
     void FollowLocation(const FVector& targetLocation)
     {
@@ -15,6 +13,5 @@ class ATopDownCharacter: ACharacter
     void MoveToLocation(const FVector& targetLocation)
     {
         AIHelper::SimpleMoveToLocation(GetController(), targetLocation);
-        Niagara::SpawnSystemAtLocation(cursorClickFX, targetLocation);
     }
 }

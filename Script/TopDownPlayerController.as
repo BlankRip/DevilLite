@@ -11,10 +11,12 @@ class ATopDownPlayerController: APlayerController
     UPROPERTY(Category = "Input")
     UInputAction SetDestinactionClickAction;
     UPROPERTY(Category = "Input")
+    UInputAction MouseScrollWheelAction;
+    UPROPERTY(Category = "Input")
     UInputMappingContext Context;
 
     UPROPERTY()
-    ATopDownCharacter cachedTopDownCharacter;
+    ATopDownPlayer cachedTopDownPlayer;
     UPROPERTY(EditDefaultsOnly)
     float clickTimeThreshold = 0.5f;
     UPROPERTY(VisibleAnywhere)
@@ -23,7 +25,7 @@ class ATopDownPlayerController: APlayerController
     UFUNCTION(BlueprintOverride)
     void BeginPlay()
     {
-        cachedTopDownCharacter = Cast<ATopDownCharacter>(GetControlledPawn());
+        cachedTopDownPlayer = Cast<ATopDownPlayer>(GetControlledPawn());
 
         //InputComponent = Cast<UEnhancedInputComponent>(GetPlayerInput());
         PushInputComponent(InputComponent);
@@ -34,6 +36,8 @@ class ATopDownPlayerController: APlayerController
         InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Started, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_Started"));
         InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Canceled, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_CompletedOrCanceled"));
         InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Completed, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_CompletedOrCanceled"));
+        
+        InputComponent.BindAction(MouseScrollWheelAction, ETriggerEvent::Triggered, FEnhancedInputActionHandlerDynamicSignature(this, n"OnMouseScrollWheel_Triggered"));
     }
 
     UFUNCTION()
@@ -45,7 +49,7 @@ class ATopDownPlayerController: APlayerController
         if(hit)
         {
             cachedTargetDestination = location;
-            cachedTopDownCharacter.FollowLocation(cachedTargetDestination);
+            cachedTopDownPlayer.FollowLocation(cachedTargetDestination);
         }
     }
 
@@ -60,8 +64,14 @@ class ATopDownPlayerController: APlayerController
     {
         if(ElapsedTime < clickTimeThreshold)
         {
-            cachedTopDownCharacter.MoveToLocation(cachedTargetDestination);
+            cachedTopDownPlayer.MoveToLocation(cachedTargetDestination);
         }
+    }
+
+    UFUNCTION()
+    void OnMouseScrollWheel_Triggered(FInputActionValue ActionValue, float32 ElapsedTime, float32 TriggeredTime, UInputAction SourceAction)
+    {
+        cachedTopDownPlayer.ChangeCameraPostion(ActionValue.Axis1D);
     }
 
     UFUNCTION(BlueprintPure)
