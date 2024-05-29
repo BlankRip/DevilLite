@@ -4,6 +4,7 @@ class ATopDownPlayer: ATopDownCharacter
     USpringArmComponent CameraSpringArm;
     default CameraSpringArm.WorldRotation = FRotator(-50, 0, 0);
     default CameraSpringArm.TargetArmLength = 1400.0f;
+    default CameraSpringArm.bDoCollisionTest = false;
     UPROPERTY(DefaultComponent, Attach = CameraSpringArm, Category = "Player Specifics")
     UCameraComponent PlayerCamera;
     default PlayerCamera.FieldOfView = 55.0f;
