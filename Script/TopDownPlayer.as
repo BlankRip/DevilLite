@@ -19,7 +19,8 @@ class ATopDownPlayer: ATopDownCharacter
     private FVector2D cameraSpringArmEndLerpPoints = FVector2D(800.f, 1400.f);
     private float cameraLerpTimer;
     private FVector2D lerpEndPoints;
-    private const int regesterChangeCameraThreshold = 1;
+    UPROPERTY(Category = "Player Specifics")
+    private const float regesterChangeCameraThreshold = 0.1f;
     private int changeCameraInputValue;
 
     UFUNCTION(BlueprintOverride)

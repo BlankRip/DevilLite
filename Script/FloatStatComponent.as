@@ -1,7 +1,17 @@
+
+event void FloatStateComponent_ZeroParamEvent();
+event void FloatStateComponent_FlostParamEvent(float newValue);
+
 class UFloatStatComponent: UActorComponent
 {
     UPROPERTY()
     private FVector2D MinMaxVaule = FVector2D(0.f, 100.f);
+    UPROPERTY()
+    FloatStateComponent_ZeroParamEvent OnMinValueHit;
+    UPROPERTY()
+    FloatStateComponent_ZeroParamEvent OnMaxValueHit;
+    UPROPERTY()
+    FloatStateComponent_FlostParamEvent OnValueChange;
 
     float Value;
     default Value = MinMaxVaule.Y;
@@ -48,6 +58,7 @@ class UFloatStatComponent: UActorComponent
     {
         Value += amount;
         ClampValueToLimits();
+        OnValueChange.Broadcast(Value);
     }
 
     private void ClampValueToLimits()
@@ -55,10 +66,12 @@ class UFloatStatComponent: UActorComponent
         if(Value > MinMaxVaule.Y)
         {
             Value = MinMaxVaule.Y;
+            OnMaxValueHit.Broadcast();
         }
         else if (Value < MinMaxVaule.X)
         {
             Value = MinMaxVaule.X;
+            OnMinValueHit.Broadcast();
         }
     }
 
@@ -89,7 +102,7 @@ class UFloatStatComponent: UActorComponent
     float GetExpectedValueAfterOvertimeModifications()
     {
         float expectedValue = Value;
-        for (auto& modifier : OverTimeModifiers)
+        for (OverTimeFloatModification& modifier : OverTimeModifiers)
         {
             expectedValue += modifier.GetRemainingModificationValue();
         }
