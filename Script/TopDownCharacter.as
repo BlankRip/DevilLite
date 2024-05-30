@@ -1,6 +1,10 @@
 class ATopDownCharacter: ACharacter
 {
-    
+    UPROPERTY(DefaultComponent)
+    UFloatStatComponent HealthStatComponent;
+    UPROPERTY(DefaultComponent)
+    UFloatStatComponent ManaStatComponent;
+
     UFUNCTION()
     void FollowLocation(const FVector& targetLocation)
     {

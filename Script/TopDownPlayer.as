@@ -1,6 +1,6 @@
 class ATopDownPlayer: ATopDownCharacter
 {
-    UPROPERTY(DefaultComponent, DisplayName = "Cam Spring Arm", Category = "Player Specifics")
+    UPROPERTY(DefaultComponent, Category = "Player Specifics")
     USpringArmComponent CameraSpringArm;
     default CameraSpringArm.WorldRotation = FRotator(-50, 0, 0);
     default CameraSpringArm.TargetArmLength = 1400.0f;
