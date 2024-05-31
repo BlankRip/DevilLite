@@ -1,9 +1,12 @@
 class ATopDownCharacter: ACharacter
 {
-    UPROPERTY(DefaultComponent)
+    UPROPERTY(DefaultComponent, Category = "Top Down Character Specifics Components")
     UFloatStatComponent HealthStatComponent;
-    UPROPERTY(DefaultComponent)
+    UPROPERTY(DefaultComponent, Category = "Top Down Character Specifics Components")
     UFloatStatComponent ManaStatComponent;
+
+    UPROPERTY(Category = "Top Down Character Specifics")
+    float basePerSecondManaRecoveryAmount;
 
     UFUNCTION()
     void FollowLocation(const FVector& targetLocation)

@@ -1,28 +1,28 @@
 class ATopDownPlayer: ATopDownCharacter
 {
-    UPROPERTY(DefaultComponent, Category = "Player Specifics")
+    UPROPERTY(DefaultComponent, Category = "Top Down Player Specifics Components")
     USpringArmComponent CameraSpringArm;
     default CameraSpringArm.WorldRotation = FRotator(-50, 0, 0);
     default CameraSpringArm.TargetArmLength = 1400.0f;
     default CameraSpringArm.bDoCollisionTest = false;
-    UPROPERTY(DefaultComponent, Attach = CameraSpringArm, Category = "Player Specifics")
+    UPROPERTY(DefaultComponent, Attach = CameraSpringArm, Category = "Top Down Player Specifics Components")
     UCameraComponent PlayerCamera;
     default PlayerCamera.FieldOfView = 55.0f;
 
-    UPROPERTY(Category = "Player Specifics")
+    UPROPERTY(Category = "Top Down Player Specifics")
     UNiagaraSystem cursorClickFX;
 
     private bool cameraLerping;
-    UPROPERTY(Category = "Player Specifics")
+    UPROPERTY(Category = "Top Down Player Specifics")
     private const float cameraLerpTime = 0.5f;
-    UPROPERTY(Category = "Player Specifics")
+    UPROPERTY(Category = "Top Down Player Specifics")
     private FVector2D cameraSpringArmEndLerpPoints = FVector2D(800.f, 1400.f);
     private float cameraLerpTimer;
     private FVector2D lerpEndPoints;
-    UPROPERTY(Category = "Player Specifics")
+    UPROPERTY(Category = "Top Down Player Specifics")
     private const float regesterChangeCameraThreshold = 0.1f;
     private int changeCameraInputValue;
-    UPROPERTY(Category = "Player Specifics")
+    UPROPERTY(Category = "Top Down Player Specifics")
     TSubclassOf<UUserWidget> playerHudWidgetClass;
 
     UFUNCTION(BlueprintOverride)
@@ -37,6 +37,7 @@ class ATopDownPlayer: ATopDownCharacter
                 playerHud.AddToViewport();
             }
         }
+        ManaStatComponent.SetConstantRecoveryPerSecond(basePerSecondManaRecoveryAmount);
     }
 
     UFUNCTION(BlueprintOverride)
