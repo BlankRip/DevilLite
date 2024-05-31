@@ -18,4 +18,10 @@ class ATopDownCharacter: ACharacter
     {
         AIHelper::SimpleMoveToLocation(GetController(), targetLocation);
     }
+
+    UFUNCTION()
+    void StopMovement()
+    {
+        GetController().StopMovement();
+    }
 }

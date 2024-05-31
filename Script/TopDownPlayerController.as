@@ -27,7 +27,6 @@ class ATopDownPlayerController: APlayerController
     {
         cachedTopDownPlayer = Cast<ATopDownPlayer>(GetControlledPawn());
 
-        //InputComponent = Cast<UEnhancedInputComponent>(GetPlayerInput());
         PushInputComponent(InputComponent);
         UEnhancedInputLocalPlayerSubsystem EnhancedInputSubsystem = UEnhancedInputLocalPlayerSubsystem::Get(this);
         EnhancedInputSubsystem.AddMappingContext(Context, 0, FModifyContextOptions());
@@ -56,7 +55,7 @@ class ATopDownPlayerController: APlayerController
     UFUNCTION()
     void OnSetDestination_Click_Started(FInputActionValue ActionValue, float32 ElapsedTime, float32 TriggeredTime, UInputAction SourceAction)
     {
-        StopMovement();
+        cachedTopDownPlayer.StopMovement();
     }
     
     UFUNCTION()
