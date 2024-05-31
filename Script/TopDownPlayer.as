@@ -22,6 +22,22 @@ class ATopDownPlayer: ATopDownCharacter
     UPROPERTY(Category = "Player Specifics")
     private const float regesterChangeCameraThreshold = 0.1f;
     private int changeCameraInputValue;
+    UPROPERTY(Category = "Player Specifics")
+    TSubclassOf<UUserWidget> playerHudWidgetClass;
+
+    UFUNCTION(BlueprintOverride)
+    void BeginPlay()
+    {
+        if(playerHudWidgetClass != nullptr)
+        {
+            APlayerController playerController = Cast<APlayerController>(GetController());
+            if(playerController != nullptr)
+            {
+                UUserWidget playerHud = WidgetBlueprint::CreateWidget(playerHudWidgetClass, playerController);
+                playerHud.AddToViewport();
+            }
+        }
+    }
 
     UFUNCTION(BlueprintOverride)
     void Tick(float DeltaSeconds)
