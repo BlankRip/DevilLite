@@ -28,3 +28,16 @@ struct FAbilityCostData
     UPROPERTY()
     float CooldownTime;
 }
+
+class UAbilityDataTable: UDataAsset
+{
+    UPROPERTY()
+    TMap<EAbilityName, FAbilityData> AbilitiesMap;
+}
+
+enum EAbilityName
+{
+    Default_NotToBeUsed,
+    TestingAbility1,
+    TestingAbility2
+}

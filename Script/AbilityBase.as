@@ -13,6 +13,9 @@ class AbilityBase
         cachedTopDownCharacter = ownerCharacter;
         cost = costData;
         ShouldRunTick = costData.HasCooldown;
+
+        //So that when assigned to a slot can't immediatly use it
+        StartCooldown();
     }
 
     void UseAbility()
@@ -29,17 +32,29 @@ class AbilityBase
     {
         if(cost.HasCooldown)
         {
-            cooldownTimer = cost.CooldownTime;
+            SetCooldownTimerValue(cost.CooldownTime);
             isInCooldown = true;
+        }
+    }
+
+    void CancelCooldown()
+    {
+        if(cost.HasCooldown)
+        {
+            SetCooldownTimerValue(0.f);
+            isInCooldown = false;
         }
     }
     
     protected void HandleCooldownTimerOnTick(float DeltaSeconds)
     {
-        cooldownTimer -= DeltaSeconds;
-        if(cooldownTimer <= 0.f)
+        if(isInCooldown)
         {
-            isInCooldown = false;
+            SetCooldownTimerValue(cooldownTimer - DeltaSeconds);
+            if(cooldownTimer <= 0.f)
+            {
+                isInCooldown = false;
+            }
         }
     }
 
@@ -57,7 +72,7 @@ class AbilityBase
         {
             if(cost.HasCooldown)
             {
-                return isInCooldown;
+                return isInCooldown && cachedTopDownCharacter.ManaStatComponent.Value > cost.ManaCost;
             }
             else
             {
@@ -79,5 +94,10 @@ class AbilityBase
     bool IsAbilityInCoolDown()
     {
         return isInCooldown;
+    }
+
+    bool HasCooldown()
+    {
+        return cost.HasCooldown;
     }
 }

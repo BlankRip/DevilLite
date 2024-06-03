@@ -4,6 +4,8 @@ class ATopDownCharacter: ACharacter
     UFloatStatComponent HealthStatComponent;
     UPROPERTY(DefaultComponent, Category = "Top Down Character Specifics Components")
     UFloatStatComponent ManaStatComponent;
+    UPROPERTY(DefaultComponent, Category = "Top Down Character Specifics Components")
+    UAbilityComponent AbilityComponent;
 
     UPROPERTY(Category = "Top Down Character Specifics")
     float basePerSecondManaRecoveryAmount;
