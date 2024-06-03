@@ -27,7 +27,7 @@ class UFloatStatComponent: UActorComponent
     {
         HandleConstantRecovery(DeltaSeconds);
         HandleOverTimeModifications(DeltaSeconds);
-        Print(this.GetName() + ":\n" + String::Conv_DoubleToString(Value), 0);
+        //Print(this.GetName() + ":\n" + String::Conv_DoubleToString(Value), 0);
     }
 
     private void HandleOverTimeModifications(const float& DeltaSeconds)
@@ -35,7 +35,7 @@ class UFloatStatComponent: UActorComponent
         if(OverTimeModifiers.Num() > 0)
         {
             float debugValue = GetExpectedValueAfterOvertimeModifications();
-            Print(String::Conv_DoubleToString(debugValue), 0, FLinearColor::Purple);
+            //Print(String::Conv_DoubleToString(debugValue), 0, FLinearColor::Purple);
             for (int32 index = OverTimeModifiers.Num() - 1; index >= 0; index--)
             {
                 AddToValue(OverTimeModifiers[index].GetThisFarmModificationAmount(DeltaSeconds));

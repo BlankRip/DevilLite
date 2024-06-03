@@ -8,7 +8,7 @@ class ATopDownCharacter: ACharacter
     UAbilityComponent AbilityComponent;
 
     UPROPERTY(Category = "Top Down Character Specifics")
-    float basePerSecondManaRecoveryAmount;
+    float basePerSecondManaRecoveryAmount = 10.f;
 
     UFUNCTION()
     void FollowLocation(const FVector& targetLocation)

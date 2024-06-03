@@ -39,5 +39,6 @@ enum EAbilityName
 {
     Default_NotToBeUsed,
     TestingAbility1,
-    TestingAbility2
+    TestingAbility2,
+    TestingAbility3
 }

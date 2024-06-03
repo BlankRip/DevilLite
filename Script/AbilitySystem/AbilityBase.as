@@ -51,6 +51,7 @@ class AbilityBase
         if(isInCooldown)
         {
             SetCooldownTimerValue(cooldownTimer - DeltaSeconds);
+            Print(String::Conv_DoubleToString(cooldownTimer), 0.f);
             if(cooldownTimer <= 0.f)
             {
                 isInCooldown = false;
@@ -72,14 +73,24 @@ class AbilityBase
         {
             if(cost.HasCooldown)
             {
-                return isInCooldown && cachedTopDownCharacter.ManaStatComponent.Value > cost.ManaCost;
+                return IsCooldownCostPassed() && IsManaCostPassed();
             }
             else
             {
-                return cachedTopDownCharacter.ManaStatComponent.Value > cost.ManaCost;
+                return IsManaCostPassed();
             }
         }
         return false;
+    }
+
+    protected bool IsCooldownCostPassed()
+    {
+        return !isInCooldown;
+    }
+
+    protected bool IsManaCostPassed()
+    {
+        return cachedTopDownCharacter.ManaStatComponent.Value >= cost.ManaCost;
     }
 
     protected void SetCooldownTimerValue(float value)
