@@ -39,7 +39,7 @@ class AbilityBase
 
     void CancelCooldown()
     {
-        if(cost.HasCooldown)
+        if(cost.HasCooldown && isInCooldown)
         {
             SetCooldownTimerValue(0.f);
             isInCooldown = false;
