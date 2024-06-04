@@ -1,5 +1,15 @@
+event void AbilityBase_ZeroParamsEvent();
+event void AbilitBase_CooldownValueChangeEvent(float remainingTime, float normalizedValue);
+
 class AbilityBase
 {
+    UPROPERTY()
+    AbilityBase_ZeroParamsEvent OnCooldownStarted;
+    UPROPERTY()
+    AbilityBase_ZeroParamsEvent OnCooldownEnded;
+    UPROPERTY()
+    AbilitBase_CooldownValueChangeEvent OnCooldownValueChanged;
+
     bool ShouldRunTick;
     protected bool isInCooldown;
     protected float cooldownTimer;
@@ -34,6 +44,7 @@ class AbilityBase
         {
             SetCooldownTimerValue(cost.CooldownTime);
             isInCooldown = true;
+            OnCooldownStarted.Broadcast();
         }
     }
 
@@ -55,6 +66,7 @@ class AbilityBase
             if(cooldownTimer <= 0.f)
             {
                 isInCooldown = false;
+                OnCooldownEnded.Broadcast();
             }
         }
     }
@@ -100,6 +112,7 @@ class AbilityBase
         {
             cooldownTimer = 0.f;
         }
+        OnCooldownValueChanged.Broadcast(cooldownTimer, cooldownTimer/cost.CooldownTime);
     }
 
     bool IsAbilityInCoolDown()

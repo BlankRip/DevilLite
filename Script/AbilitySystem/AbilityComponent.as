@@ -1,6 +1,6 @@
 event void AbilityComponent_UISetUpEvent(int slotIndex, FAbilityUiData abilityUiData);
-event void AbilityComponent_UiCooldownSetUpEvent(int slotIndex, AbilityBase ability);
-event void AbilityComponent_UiClearSlotEvent(int slotIndex, AbilityBase ability);
+event void AbilityComponent_UiCooldownSetUpEvent(int slotIndex, AbilityBase& ability);
+event void AbilityComponent_UiClearSlotEvent(int slotIndex, AbilityBase& ability);
 
 class UAbilityComponent: UActorComponent
 {

@@ -36,6 +36,7 @@ class UAbilitySlotUserWidget: UUserWidget
 
         attachedAbilityComponent.OnNewAbilitySlotedUiSetUpEvent.AddUFunction(this, n"SetUpAbililtyUIVisuals");
         attachedAbilityComponent.OnAbilitySlotCleared.AddUFunction(this, n"ClearAbilityUiVisual");
+        attachedAbilityComponent.OnNewAbilitySlotedUiCooldownSetUpEvent.AddUFunction(this, n"SetUpCooldownUiVisuals");
     }
 
     UFUNCTION()
@@ -49,16 +50,55 @@ class UAbilitySlotUserWidget: UUserWidget
     }
 
     UFUNCTION()
-    void ClearAbilityUiVisual(const int& slotIndex, const AbilityBase& ability)
+    void ClearAbilityUiVisual(const int& slotIndex, AbilityBase& ability)
     {
         if(slotIndex == uiSlotIndex)
         {
             AbilityIcon.SetBrushFromTexture(nullptr);
 
-            if(CooldownPanel.GetVisibility() != ESlateVisibility::Hidden)
+            if(usingCooldown)
             {
-                CooldownPanel.SetVisibility(ESlateVisibility::Hidden);
+                ability.OnCooldownStarted.Unbind(this, n"OnCooldownStarted");
+                ability.OnCooldownEnded.Unbind(this, n"OnCooldownEnded");
+                ability.OnCooldownValueChanged.Unbind(this, n"OnCooldownValueChanged");
+                usingCooldown = true;
+                if(CooldownPanel.GetVisibility() != ESlateVisibility::Hidden)
+                {
+                    CooldownPanel.SetVisibility(ESlateVisibility::Hidden);
+                }
             }
         }
+    }
+
+    UFUNCTION()
+    void SetUpCooldownUiVisuals(const int& slotIndex, AbilityBase& ability)
+    {
+        if(slotIndex == uiSlotIndex)
+        {
+            ability.OnCooldownStarted.AddUFunction(this, n"OnCooldownStarted");
+            ability.OnCooldownEnded.AddUFunction(this, n"OnCooldownEnded");
+            ability.OnCooldownValueChanged.AddUFunction(this, n"OnCooldownValueChanged");
+            usingCooldown = true;
+        }
+    }
+
+    UFUNCTION()
+    void OnCooldownStarted()
+    {
+        CooldownPanel.SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    }
+
+    UFUNCTION()
+    void OnCooldownValueChanged(const float& newValue, const float& normalizedValue)
+    {
+        int valueCeil = Math::CeilToInt(newValue);
+        CooldownText.SetText(FText::FromString(String::Conv_IntToString(valueCeil)));
+        CooldownProgressBar.Percent = normalizedValue;
+    }
+
+    UFUNCTION()
+    void OnCooldownEnded()
+    {
+        CooldownPanel.SetVisibility(ESlateVisibility::Hidden);
     }
 }
