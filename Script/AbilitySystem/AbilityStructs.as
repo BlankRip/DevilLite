@@ -14,7 +14,7 @@ struct FAbilityUiData
     UPROPERTY()
     const FString Name;
     UPROPERTY()
-    const UTexture2D Image;
+    UTexture2D Image;
     UPROPERTY()
     const FString Description;
 }

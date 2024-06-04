@@ -1,5 +1,16 @@
+event void AbilityComponent_UISetUpEvent(int slotIndex, FAbilityUiData abilityUiData);
+event void AbilityComponent_UiCooldownSetUpEvent(int slotIndex, AbilityBase ability);
+event void AbilityComponent_UiClearSlotEvent(int slotIndex, AbilityBase ability);
+
 class UAbilityComponent: UActorComponent
 {
+    UPROPERTY()
+    AbilityComponent_UISetUpEvent OnNewAbilitySlotedUiSetUpEvent;
+    UPROPERTY()
+    AbilityComponent_UiCooldownSetUpEvent OnNewAbilitySlotedUiCooldownSetUpEvent;
+    UPROPERTY()
+    AbilityComponent_UiClearSlotEvent OnAbilitySlotCleared;
+
     UPROPERTY()
     int MaxSlots = 6;
     UPROPERTY()
@@ -91,8 +102,14 @@ class UAbilityComponent: UActorComponent
         }
 
         const FAbilityData& abilityData = UsableAbilitiesTable.AbilitiesMap[abilityDataTableRowName];
-        AbilityBase ability = Cast<AbilityBase>(NewObject(this, abilityData.AbilityClass, FName(abilityData.UiData.Name))); 
-        //UI.SetUp(abilityData.UiData, slotIndex);
+        AbilityBase ability = Cast<AbilityBase>(NewObject(this, abilityData.AbilityClass, FName(abilityData.UiData.Name)));
+
+        OnNewAbilitySlotedUiSetUpEvent.Broadcast(slotIndex, abilityData.UiData);
+        if(abilityData.Cost.HasCooldown)
+        {
+            OnNewAbilitySlotedUiCooldownSetUpEvent.Broadcast(slotIndex, ability);
+        }
+        
         AllSlots[slotIndex].Ability = ability;
         AllSlots[slotIndex].Ability.InitilizeAbility(ownerCharacter, abilityData.Cost);
         AllSlots[slotIndex].IsEmpty = false;
@@ -115,6 +132,7 @@ class UAbilityComponent: UActorComponent
         {
             tickingAbilities.Remove(slotIndex);
         }
+        OnAbilitySlotCleared.Broadcast(slotIndex, AllSlots[slotIndex].Ability);
         AllSlots[slotIndex].Ability = nullptr;
         AllSlots[slotIndex].IsEmpty = true;
     }
