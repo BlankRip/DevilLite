@@ -22,6 +22,8 @@ struct FAbilityUiData
 struct FAbilityCostData
 {
     UPROPERTY()
+    uint MaxUses;
+    UPROPERTY()
     float ManaCost;
     UPROPERTY()
     bool HasCooldown;

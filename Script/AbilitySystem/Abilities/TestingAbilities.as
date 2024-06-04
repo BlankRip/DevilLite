@@ -1,10 +1,10 @@
-class TestingAbilityA: AbilityBase
+class TestingAbilityA: MultiUseAbilityBase
 {
     
     void UseAbility() override
     {
         Print("Arrows Fired, I Repeat Arrows Fired");
-        StartCooldown();
+        StartCooldownAndReduceUses();
     }
 
     void AbilityTick(float DeltaSeconds) override
