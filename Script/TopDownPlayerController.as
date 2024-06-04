@@ -22,6 +22,8 @@ class ATopDownPlayerController: APlayerController
     UPROPERTY(VisibleAnywhere)
     FVector cachedTargetDestination;
 
+    private bool hitWalkiableInThisInputCycle;
+
     UFUNCTION(BlueprintOverride)
     void BeginPlay()
     {
@@ -42,10 +44,9 @@ class ATopDownPlayerController: APlayerController
     UFUNCTION()
     void OnSetDestination_Click_Triggered(FInputActionValue ActionValue, float32 ElapsedTime, float32 TriggeredTime, UInputAction SourceAction)
     {
-        bool hit;
         FVector location;
-        GetLocationUnderCursor(hit, location);
-        if(hit)
+        GetLocationUnderCursor(hitWalkiableInThisInputCycle, location);
+        if(hitWalkiableInThisInputCycle)
         {
             cachedTargetDestination = location;
             cachedTopDownPlayer.FollowLocation(cachedTargetDestination);
@@ -55,13 +56,14 @@ class ATopDownPlayerController: APlayerController
     UFUNCTION()
     void OnSetDestination_Click_Started(FInputActionValue ActionValue, float32 ElapsedTime, float32 TriggeredTime, UInputAction SourceAction)
     {
+        hitWalkiableInThisInputCycle = false;
         cachedTopDownPlayer.StopMovement();
     }
     
     UFUNCTION()
     void OnSetDestination_Click_CompletedOrCanceled(FInputActionValue ActionValue, float32 ElapsedTime, float32 TriggeredTime, UInputAction SourceAction)
     {
-        if(ElapsedTime < clickTimeThreshold)
+        if(ElapsedTime < clickTimeThreshold && hitWalkiableInThisInputCycle)
         {
             cachedTopDownPlayer.MoveToLocation(cachedTargetDestination);
         }
@@ -77,7 +79,7 @@ class ATopDownPlayerController: APlayerController
     void GetLocationUnderCursor(bool&out hit, FVector&out location)
     {
         FHitResult hitResult;
-        GetHitResultUnderCursorByChannel(ETraceTypeQuery::Visibility, false, hitResult);
+        GetHitResultUnderCursorByChannel(ETraceTypeQuery::WalkableArea, false, hitResult);
         hit = hitResult.bBlockingHit;
         location = hitResult.Location;
     }
