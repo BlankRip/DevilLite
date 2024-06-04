@@ -66,6 +66,13 @@ class UAbilitySlotUserWidget: UUserWidget
                 {
                     CooldownPanel.SetVisibility(ESlateVisibility::Hidden);
                 }
+
+                MultiUseAbilityBase multiUseAbility = Cast<MultiUseAbilityBase>(ability);
+                if(multiUseAbility != nullptr)
+                {
+                    multiUseAbility.OnRemainingUsesChanged.Unbind(this, n"OnRemainingUpdated");
+                    NumberOfUsesText.SetVisibility(ESlateVisibility::Hidden);
+                }
             }
         }
     }
@@ -79,6 +86,13 @@ class UAbilitySlotUserWidget: UUserWidget
             ability.OnCooldownEnded.AddUFunction(this, n"OnCooldownEnded");
             ability.OnCooldownValueChanged.AddUFunction(this, n"OnCooldownValueChanged");
             usingCooldown = true;
+
+            MultiUseAbilityBase multiUseAbility = Cast<MultiUseAbilityBase>(ability);
+            if(multiUseAbility != nullptr)
+            {
+                multiUseAbility.OnRemainingUsesChanged.AddUFunction(this, n"OnRemainingUpdated");
+                NumberOfUsesText.SetVisibility(ESlateVisibility::Visible);
+            }
         }
     }
 
@@ -100,5 +114,11 @@ class UAbilitySlotUserWidget: UUserWidget
     void OnCooldownEnded()
     {
         CooldownPanel.SetVisibility(ESlateVisibility::Hidden);
+    }
+
+    UFUNCTION()
+    void OnRemainingUpdated(int remainginUses)
+    {
+        NumberOfUsesText.SetText(FText::FromString(String::Conv_IntToString(remainginUses)));
     }
 }

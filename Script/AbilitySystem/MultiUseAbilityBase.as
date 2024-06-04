@@ -1,12 +1,17 @@
+event void MultiUseAbilityBase_OneIntParamEvent(int remainingUses);
+
 class MultiUseAbilityBase: AbilityBase
 {
-    protected int usesRemaining;
+    UPROPERTY()
+    MultiUseAbilityBase_OneIntParamEvent OnRemainingUsesChanged;
+
+    protected int remainingUses;
 
     void InitilizeAbility(ATopDownCharacter ownerCharacter, FAbilityCostData costData) override
     {
         Super::InitilizeAbility(ownerCharacter, costData);
         //So that when assigned to a slot can't immediatly use it
-        SetUsesRemaining(0);
+        SetRemainingUses(0);
         Super::StartCooldown();
         if(costData.MaxUses == 0)
         {
@@ -17,12 +22,12 @@ class MultiUseAbilityBase: AbilityBase
     protected void StartCooldownAndReduceUses()
     {
         StartCooldown();
-        SetUsesRemaining(usesRemaining - 1);
+        SetRemainingUses(remainingUses - 1);
     }
 
     void StartCooldown() override
     {
-        if(usesRemaining == cost.MaxUses)
+        if(remainingUses == cost.MaxUses)
         {
             Super::StartCooldown();
         }
@@ -32,8 +37,8 @@ class MultiUseAbilityBase: AbilityBase
     {
         if(isInCooldown)
         {
-            SetUsesRemaining(usesRemaining + 1);
-            if(usesRemaining == cost.MaxUses)
+            SetRemainingUses(remainingUses + 1);
+            if(remainingUses == cost.MaxUses)
             {
                 SetCooldownTimerValue(0.f);
                 isInCooldown = false;
@@ -49,8 +54,8 @@ class MultiUseAbilityBase: AbilityBase
             Print(String::Conv_DoubleToString(cooldownTimer), 0.f);
             if(cooldownTimer <= 0.f)
             {
-                SetUsesRemaining(usesRemaining + 1);
-                if(usesRemaining == cost.MaxUses)
+                SetRemainingUses(remainingUses + 1);
+                if(remainingUses == cost.MaxUses)
                 {
                     isInCooldown = false;
                     OnCooldownEnded.Broadcast();
@@ -69,7 +74,7 @@ class MultiUseAbilityBase: AbilityBase
         {
             if(cost.HasCooldown)
             {
-                return (usesRemaining > 0) && IsManaCostPassed();
+                return (remainingUses > 0) && IsManaCostPassed();
             }
             else
             {
@@ -80,12 +85,13 @@ class MultiUseAbilityBase: AbilityBase
         return false;
     }
 
-    protected void SetUsesRemaining(int newValue)
+    protected void SetRemainingUses(int newValue)
     {
-        usesRemaining = newValue;
-        if(usesRemaining < 0)
+        remainingUses = newValue;
+        if(remainingUses < 0)
         {
-            usesRemaining = 0;
+            remainingUses = 0;
         }
+        OnRemainingUsesChanged.Broadcast(remainingUses);
     }
 }
