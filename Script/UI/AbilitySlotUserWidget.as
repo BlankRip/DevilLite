@@ -8,7 +8,7 @@ class UAbilitySlotUserWidget: UUserWidget
     UPROPERTY(meta = "BindWidget")
     UPanelWidget CooldownPanel;
     UPROPERTY(meta = "BindWidget")
-    UProgressBar CooldownProgressBar;
+    URadialProgressBar CooldownProgressBar;
     UPROPERTY(meta = "BindWidget")
     UTextBlock CooldownText;
 
@@ -107,7 +107,7 @@ class UAbilitySlotUserWidget: UUserWidget
     {
         int valueCeil = Math::CeilToInt(newValue);
         CooldownText.SetText(FText::FromString(String::Conv_IntToString(valueCeil)));
-        CooldownProgressBar.Percent = normalizedValue;
+        CooldownProgressBar.SetPercentage(normalizedValue);
     }
 
     UFUNCTION()
