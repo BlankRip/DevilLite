@@ -1,12 +1,5 @@
-event void MultiUseAbilityBase_OneIntParamEvent(int remainingUses);
-
-class MultiUseAbilityBase: AbilityBase
+class MultiUseAbilityBase: AbilityBaseWithIntTracker
 {
-    UPROPERTY()
-    MultiUseAbilityBase_OneIntParamEvent OnRemainingUsesChanged;
-
-    protected int remainingUses;
-
     void InitilizeAbility(ATopDownCharacter ownerCharacter, FAbilityCostData costData) override
     {
         Super::InitilizeAbility(ownerCharacter, costData);
@@ -22,12 +15,12 @@ class MultiUseAbilityBase: AbilityBase
     protected void StartCooldownAndReduceUses()
     {
         StartCooldown();
-        SetRemainingUses(remainingUses - 1);
+        SetRemainingUses(tracker - 1);
     }
 
     void StartCooldown() override
     {
-        if(remainingUses == cost.MaxUses)
+        if(tracker == cost.MaxUses)
         {
             Super::StartCooldown();
         }
@@ -37,8 +30,8 @@ class MultiUseAbilityBase: AbilityBase
     {
         if(isInCooldown)
         {
-            SetRemainingUses(remainingUses + 1);
-            if(remainingUses == cost.MaxUses)
+            SetRemainingUses(tracker + 1);
+            if(tracker == cost.MaxUses)
             {
                 SetCooldownTimerValue(0.f);
                 isInCooldown = false;
@@ -54,8 +47,8 @@ class MultiUseAbilityBase: AbilityBase
             Print(String::Conv_DoubleToString(cooldownTimer), 0.f);
             if(cooldownTimer <= 0.f)
             {
-                SetRemainingUses(remainingUses + 1);
-                if(remainingUses == cost.MaxUses)
+                SetRemainingUses(tracker + 1);
+                if(tracker == cost.MaxUses)
                 {
                     isInCooldown = false;
                     OnCooldownEnded.Broadcast();
@@ -74,7 +67,7 @@ class MultiUseAbilityBase: AbilityBase
         {
             if(cost.HasCooldown)
             {
-                return (remainingUses > 0) && IsManaCostPassed();
+                return (tracker > 0) && IsManaCostPassed();
             }
             else
             {
@@ -87,11 +80,11 @@ class MultiUseAbilityBase: AbilityBase
 
     protected void SetRemainingUses(int newValue)
     {
-        remainingUses = newValue;
-        if(remainingUses < 0)
+        int setValueTo = newValue;
+        if(setValueTo < 0)
         {
-            remainingUses = 0;
+            setValueTo = 0;
         }
-        OnRemainingUsesChanged.Broadcast(remainingUses);
+        SetTrackerValue(setValueTo);
     }
 }

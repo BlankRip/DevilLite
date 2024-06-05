@@ -67,10 +67,10 @@ class UAbilitySlotUserWidget: UUserWidget
                     CooldownPanel.SetVisibility(ESlateVisibility::Hidden);
                 }
 
-                MultiUseAbilityBase multiUseAbility = Cast<MultiUseAbilityBase>(ability);
-                if(multiUseAbility != nullptr)
+                AbilityBaseWithIntTracker abilityWithTracker = Cast<AbilityBaseWithIntTracker>(ability);
+                if(abilityWithTracker != nullptr)
                 {
-                    multiUseAbility.OnRemainingUsesChanged.Unbind(this, n"OnRemainingUpdated");
+                    abilityWithTracker.OnTrackerValueChanged.Unbind(this, n"OnRemainingUpdated");
                     NumberOfUsesText.SetVisibility(ESlateVisibility::Hidden);
                 }
             }
@@ -87,10 +87,10 @@ class UAbilitySlotUserWidget: UUserWidget
             ability.OnCooldownValueChanged.AddUFunction(this, n"OnCooldownValueChanged");
             usingCooldown = true;
 
-            MultiUseAbilityBase multiUseAbility = Cast<MultiUseAbilityBase>(ability);
-            if(multiUseAbility != nullptr)
+            AbilityBaseWithIntTracker abilityWithTracker = Cast<AbilityBaseWithIntTracker>(ability);
+            if(abilityWithTracker != nullptr)
             {
-                multiUseAbility.OnRemainingUsesChanged.AddUFunction(this, n"OnRemainingUpdated");
+                abilityWithTracker.OnTrackerValueChanged.AddUFunction(this, n"OnRemainingUpdated");
                 NumberOfUsesText.SetVisibility(ESlateVisibility::Visible);
             }
         }
