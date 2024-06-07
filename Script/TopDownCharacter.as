@@ -29,4 +29,24 @@ class ATopDownCharacter: ACharacter
     {
         GetController().StopMovement();
     }
+
+    UFUNCTION()
+    void TakeDamage(float& damageAmount)
+    {
+        if(damageAmount > 0)
+        {
+            damageAmount *= -1;
+        }
+        HealthStatComponent.AddToValue(damageAmount);
+    }
+
+    UFUNCTION()
+    void TakeDamageOverTimer(float& damageAmount, const float& overTimeInSeconds)
+    {
+        if(damageAmount > 0)
+        {
+            damageAmount *= -1;
+        }
+        HealthStatComponent.AddOverTime(damageAmount, overTimeInSeconds);
+    }
 }
