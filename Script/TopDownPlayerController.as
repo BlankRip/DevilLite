@@ -4,6 +4,7 @@ class ATopDownPlayerController: APlayerController
     default bEnableClickEvents = true;
     default bEnableTouchEvents = false;
     default bEnableMouseOverEvents = true;
+    default DefaultClickTraceChannel = ECollisionChannel::MouseHitRegester;
     UPROPERTY(DefaultComponent)
     UEnhancedInputComponent InputComponent;
 
@@ -72,6 +73,7 @@ class ATopDownPlayerController: APlayerController
                 CurrentMouseCursor = EMouseCursor::Crosshairs;
                 break;
         }
+        currentHoverType = mouseHoverType;
     }
 
     UFUNCTION()
@@ -98,7 +100,10 @@ class ATopDownPlayerController: APlayerController
     {
         if(ElapsedTime < clickTimeThreshold && hitWalkiableInThisInputCycle)
         {
-            cachedTopDownPlayer.MoveToLocation(cachedTargetDestination);
+            if(currentHoverType == EMouseHoverType::Default_Walkable)
+            {
+                cachedTopDownPlayer.MoveToLocation(cachedTargetDestination);
+            }
         }
     }
 
@@ -112,7 +117,7 @@ class ATopDownPlayerController: APlayerController
     void GetLocationUnderCursor(bool&out hit, FVector&out location)
     {
         FHitResult hitResult;
-        GetHitResultUnderCursorByChannel(ETraceTypeQuery::MouseHItRegester, false, hitResult);
+        GetHitResultUnderCursorByChannel(ETraceTypeQuery::MouseHitRegester, false, hitResult);
         hit = hitResult.bBlockingHit;
         location = hitResult.Location;
     }
