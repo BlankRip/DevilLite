@@ -16,6 +16,8 @@ class ATopDownPlayerController: APlayerController
     UInputMappingContext Context;
 
     UPROPERTY()
+    UMouseHoverGlobalEvent mouseHoverEvent;
+    UPROPERTY(VisibleAnywhere)
     ATopDownPlayer cachedTopDownPlayer;
     UPROPERTY(EditDefaultsOnly)
     float clickTimeThreshold = 0.5f;
@@ -23,6 +25,7 @@ class ATopDownPlayerController: APlayerController
     FVector cachedTargetDestination;
 
     private bool hitWalkiableInThisInputCycle;
+    private EMouseHoverType currentHoverType;
 
     UFUNCTION(BlueprintOverride)
     void BeginPlay()
@@ -39,6 +42,36 @@ class ATopDownPlayerController: APlayerController
         InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Completed, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_CompletedOrCanceled"));
         
         InputComponent.BindAction(MouseScrollWheelAction, ETriggerEvent::Triggered, FEnhancedInputActionHandlerDynamicSignature(this, n"OnMouseScrollWheel_Triggered"));
+
+        if(mouseHoverEvent != nullptr)
+        {
+            mouseHoverEvent.OnMouseHitRegesterObjectChanged.AddUFunction(this, n"OnMouseHitRegesterObjectChanged");
+            OnDestroyed.AddUFunction(this, n"OnDestroyEvent");
+        }
+    }
+
+    UFUNCTION()
+    void OnDestroyEvent(AActor DestroyedActor)
+    {
+        mouseHoverEvent.OnMouseHitRegesterObjectChanged.Unbind(this, n"OnMouseHitRegesterObjectChanged");
+        Print("Wanna know when this is triggered");
+    }
+
+    UFUNCTION()
+    void OnMouseHitRegesterObjectChanged(EMouseHoverType mouseHoverType)
+    {
+        switch(mouseHoverType)
+        {
+            case EMouseHoverType::Default_Walkable:
+                CurrentMouseCursor = EMouseCursor::Default;
+                break;
+            case EMouseHoverType::Interactable:
+                CurrentMouseCursor = EMouseCursor::Hand;
+                break;
+            case EMouseHoverType::Attackable:
+                CurrentMouseCursor = EMouseCursor::Crosshairs;
+                break;
+        }
     }
 
     UFUNCTION()
@@ -79,7 +112,7 @@ class ATopDownPlayerController: APlayerController
     void GetLocationUnderCursor(bool&out hit, FVector&out location)
     {
         FHitResult hitResult;
-        GetHitResultUnderCursorByChannel(ETraceTypeQuery::WalkableArea, false, hitResult);
+        GetHitResultUnderCursorByChannel(ETraceTypeQuery::MouseHItRegester, false, hitResult);
         hit = hitResult.bBlockingHit;
         location = hitResult.Location;
     }
