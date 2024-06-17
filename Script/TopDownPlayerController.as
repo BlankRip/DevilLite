@@ -81,7 +81,7 @@ class ATopDownPlayerController: APlayerController
     {
         FVector location;
         GetLocationUnderCursor(hitWalkiableInThisInputCycle, location);
-        if(hitWalkiableInThisInputCycle)
+        if(hitWalkiableInThisInputCycle && currentHoverType == EMouseHoverType::Default_Walkable)
         {
             cachedTargetDestination = location;
             cachedTopDownPlayer.FollowLocation(cachedTargetDestination);
