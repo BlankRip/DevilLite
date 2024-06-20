@@ -18,12 +18,30 @@ class UFloatStatComponent: UActorComponent
     UPROPERTY(Category = "Debugging")
     bool showPrintStatements;
 
+    UPROPERTY(Replicated, ReplicatedUsing = "OnRep_Value")
     float Value;
     default Value = MinMaxVaule.Y;
+    UPROPERTY(Replicated)
     private float ConstantRecoveryAmount;
     private TArray<OverTimeFloatModification> OverTimeModifiers;
     default OverTimeModifiers.Reserve(15);
+    default SetIsReplicated(true);
 
+    UFUNCTION()
+    void OnRep_Value()
+    {
+        if(Value >= MinMaxVaule.Y)
+        {
+            OnMaxValueHit.Broadcast();
+        }
+        else if (Value <= MinMaxVaule.X)
+        {
+            OnMinValueHit.Broadcast();
+        }
+        OnValueChange.Broadcast(Value);
+        OnValueChangeNormalized.Broadcast(Value/MinMaxVaule.Y);
+        //Print(String::Conv_DoubleToString(Value), 0, FLinearColor::Purple);
+    }
 
     UFUNCTION(BlueprintOverride)
     void Tick(float DeltaSeconds)
@@ -31,16 +49,27 @@ class UFloatStatComponent: UActorComponent
         HandleConstantRecovery(DeltaSeconds);
         HandleOverTimeModifications(DeltaSeconds);
         if(showPrintStatements)
-            Print(this.GetName() + ":\n" + String::Conv_DoubleToString(Value), 0);
+        {
+            Print(this.GetOwner().GetName() + ":\n" + String::Conv_DoubleToString(Value), 0);
+            if(GetOwner().LocalRole < ENetRole::ROLE_Authority) {
+                Print("Client", 0);
+            } 
+            else
+            {
+                Print("Server", 0);
+            }
+        }
     }
 
     private void HandleOverTimeModifications(const float& DeltaSeconds)
     {
         if(OverTimeModifiers.Num() > 0)
         {
-            float debugValue = GetExpectedValueAfterOvertimeModifications();
             if(showPrintStatements)
+            {
+                float debugValue = GetExpectedValueAfterOvertimeModifications();
                 Print(String::Conv_DoubleToString(debugValue), 0, FLinearColor::Purple);
+            }
             for (int32 index = OverTimeModifiers.Num() - 1; index >= 0; index--)
             {
                 AddToValue(OverTimeModifiers[index].GetThisFarmModificationAmount(DeltaSeconds));
@@ -62,6 +91,12 @@ class UFloatStatComponent: UActorComponent
 
     UFUNCTION()
     void AddToValue(const float& amount)
+    {
+        ServerAddToValue(amount);
+    }
+
+    UFUNCTION(Server)
+    void ServerAddToValue(const float& amount)
     {
         Value += amount;
         ClampValueToLimits();
@@ -92,7 +127,7 @@ class UFloatStatComponent: UActorComponent
             isNegetiveModification = true;
             amountToAdd *= -1;
         }
-
+        Print("Testing if triggerd", 5, FLinearColor::Purple);
         OverTimeModifiers.Add(OverTimeFloatModification(amountToAdd, overDuration, isNegetiveModification));
     }
 

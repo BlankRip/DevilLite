@@ -1,14 +1,16 @@
 class ATopDownCharacter: ACharacter
 {
-    UPROPERTY(DefaultComponent, Category = "Top Down Character Specifics Components")
+    UPROPERTY(DefaultComponent, Replicated, Category = "Top Down Character Specifics Components")
     UFloatStatComponent HealthStatComponent;
-    UPROPERTY(DefaultComponent, Category = "Top Down Character Specifics Components")
+    UPROPERTY(DefaultComponent, Replicated, Category = "Top Down Character Specifics Components")
     UFloatStatComponent ManaStatComponent;
     UPROPERTY(DefaultComponent, Category = "Top Down Character Specifics Components")
     UAbilityComponent AbilityComponent;
+    default bReplicates = true;
 
     UPROPERTY(Category = "Top Down Character Specifics")
     float basePerSecondManaRecoveryAmount = 10.f;
+
 
     UFUNCTION()
     void FollowLocation(const FVector& targetLocation)
@@ -22,19 +24,16 @@ class ATopDownCharacter: ACharacter
     void MoveToLocation(const FVector& targetLocation)
     {
         MoveToLocationServerRPC(targetLocation);
+        AIHelper::SimpleMoveToLocation(GetController(), targetLocation);
+        Print("Wanna know when this is triggered");
         //Print(String::Conv_VectorToString(targetLocation));
     }
 
     UFUNCTION(Server)
     void MoveToLocationServerRPC(const FVector& targetLocation)
     {
-        if(LocalRole == ENetRole::ROLE_Authority)
-        {
-            AIHelper::SimpleMoveToLocation(GetController(), targetLocation);
-            
-            //Print("Wanna know when this is triggered");
-            //Print(String::Conv_VectorToString(targetLocation));
-        }
+        
+        //Print(String::Conv_VectorToString(targetLocation));
     }
 
     UFUNCTION()
