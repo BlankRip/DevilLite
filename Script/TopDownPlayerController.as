@@ -33,21 +33,27 @@ class ATopDownPlayerController: APlayerController
     {
         cachedTopDownPlayer = Cast<ATopDownPlayer>(GetControlledPawn());
 
-        PushInputComponent(InputComponent);
-        UEnhancedInputLocalPlayerSubsystem EnhancedInputSubsystem = UEnhancedInputLocalPlayerSubsystem::Get(this);
-        EnhancedInputSubsystem.AddMappingContext(Context, 0, FModifyContextOptions());
-
-        InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Triggered, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_Triggered"));
-        InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Started, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_Started"));
-        InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Canceled, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_CompletedOrCanceled"));
-        InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Completed, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_CompletedOrCanceled"));
-        
-        InputComponent.BindAction(MouseScrollWheelAction, ETriggerEvent::Triggered, FEnhancedInputActionHandlerDynamicSignature(this, n"OnMouseScrollWheel_Triggered"));
-
-        if(mouseHoverEvent != nullptr)
+        if(IsLocalController())
         {
-            mouseHoverEvent.OnMouseHitRegesterObjectChanged.AddUFunction(this, n"OnMouseHitRegesterObjectChanged");
-            OnDestroyed.AddUFunction(this, n"OnDestroyEvent");
+            PushInputComponent(InputComponent);
+            UEnhancedInputLocalPlayerSubsystem EnhancedInputSubsystem = UEnhancedInputLocalPlayerSubsystem::Get(this);
+            if(EnhancedInputSubsystem != nullptr)
+            {
+                EnhancedInputSubsystem.AddMappingContext(Context, 0, FModifyContextOptions());
+            }
+
+            InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Triggered, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_Triggered"));
+            InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Started, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_Started"));
+            InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Canceled, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_CompletedOrCanceled"));
+            InputComponent.BindAction(SetDestinactionClickAction, ETriggerEvent::Completed, FEnhancedInputActionHandlerDynamicSignature(this, n"OnSetDestination_Click_CompletedOrCanceled"));
+            
+            InputComponent.BindAction(MouseScrollWheelAction, ETriggerEvent::Triggered, FEnhancedInputActionHandlerDynamicSignature(this, n"OnMouseScrollWheel_Triggered"));
+
+            if(mouseHoverEvent != nullptr)
+            {
+                mouseHoverEvent.OnMouseHitRegesterObjectChanged.AddUFunction(this, n"OnMouseHitRegesterObjectChanged");
+                OnDestroyed.AddUFunction(this, n"OnDestroyEvent");
+            }
         }
     }
 

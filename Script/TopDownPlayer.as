@@ -28,12 +28,13 @@ class ATopDownPlayer: ATopDownCharacter
     UFUNCTION(BlueprintOverride)
     void BeginPlay()
     {
-        if(playerHudWidgetClass != nullptr)
+        if(playerHudWidgetClass != nullptr && IsLocallyControlled())
         {
             APlayerController playerController = Cast<APlayerController>(GetController());
             if(playerController != nullptr)
             {
                 UUserWidget playerHud = WidgetBlueprint::CreateWidget(playerHudWidgetClass, playerController);
+                playerHud.SetOwningPlayer(playerController);
                 playerHud.AddToViewport();
             }
         }

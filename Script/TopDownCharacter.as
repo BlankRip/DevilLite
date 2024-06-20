@@ -21,7 +21,23 @@ class ATopDownCharacter: ACharacter
     UFUNCTION()
     void MoveToLocation(const FVector& targetLocation)
     {
-        AIHelper::SimpleMoveToLocation(GetController(), targetLocation);
+        MoveToLocationServerRPC(targetLocation);
+            Print(String::Conv_IntToString(testNumber));
+
+    }
+
+    int testNumber;
+
+    UFUNCTION(Server)
+    void MoveToLocationServerRPC(const FVector& targetLocation)
+    {
+        if(LocalRole == ENetRole::ROLE_Authority)
+        {
+            AIHelper::SimpleMoveToLocation(GetController(), targetLocation);
+            testNumber++;
+            //Print("Wanna know when this is triggered");
+            Print(String::Conv_IntToString(testNumber));
+        }
     }
 
     UFUNCTION()
