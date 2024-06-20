@@ -15,6 +15,9 @@ class UFloatStatComponent: UActorComponent
     UPROPERTY()
     FloatStatComponent_FlostParamEvent OnValueChangeNormalized;
 
+    UPROPERTY(Category = "Debugging")
+    bool showPrintStatements;
+
     float Value;
     default Value = MinMaxVaule.Y;
     private float ConstantRecoveryAmount;
@@ -27,7 +30,8 @@ class UFloatStatComponent: UActorComponent
     {
         HandleConstantRecovery(DeltaSeconds);
         HandleOverTimeModifications(DeltaSeconds);
-        //Print(this.GetName() + ":\n" + String::Conv_DoubleToString(Value), 0);
+        if(showPrintStatements)
+            Print(this.GetName() + ":\n" + String::Conv_DoubleToString(Value), 0);
     }
 
     private void HandleOverTimeModifications(const float& DeltaSeconds)
@@ -35,7 +39,8 @@ class UFloatStatComponent: UActorComponent
         if(OverTimeModifiers.Num() > 0)
         {
             float debugValue = GetExpectedValueAfterOvertimeModifications();
-            //Print(String::Conv_DoubleToString(debugValue), 0, FLinearColor::Purple);
+            if(showPrintStatements)
+                Print(String::Conv_DoubleToString(debugValue), 0, FLinearColor::Purple);
             for (int32 index = OverTimeModifiers.Num() - 1; index >= 0; index--)
             {
                 AddToValue(OverTimeModifiers[index].GetThisFarmModificationAmount(DeltaSeconds));
