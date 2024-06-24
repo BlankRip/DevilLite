@@ -18,21 +18,32 @@ class ATopDownCharacter: ACharacter
         FVector direction = targetLocation - GetActorLocation();
         direction.Normalize();
         AddMovementInput(direction);
+        //AddMovementServerRPC(direction);
+    }
+
+    UFUNCTION(Server)
+    void AddMovementServerRPC(const FVector& direction)
+    {
+        MovementComponent.AddInputVector(direction);
+
+        //AddMovementInput(direction);
+        Print(String::Conv_BoolToString(IsMoveInputIgnored()));
+        Print(String::Conv_Int64ToString(LocalRole));
     }
 
     UFUNCTION()
     void MoveToLocation(const FVector& targetLocation)
     {
         MoveToLocationServerRPC(targetLocation);
-        AIHelper::SimpleMoveToLocation(GetController(), targetLocation);
-        Print("Wanna know when this is triggered");
+        //Print(String::Conv_NameToString(GetController().Name));
         //Print(String::Conv_VectorToString(targetLocation));
     }
 
     UFUNCTION(Server)
     void MoveToLocationServerRPC(const FVector& targetLocation)
     {
-        
+        AIHelper::SimpleMoveToLocation(GetController(), targetLocation);
+        //Print(String::Conv_NameToString(GetController().Name));
         //Print(String::Conv_VectorToString(targetLocation));
     }
 

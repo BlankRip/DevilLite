@@ -51,13 +51,6 @@ class UFloatStatComponent: UActorComponent
         if(showPrintStatements)
         {
             Print(this.GetOwner().GetName() + ":\n" + String::Conv_DoubleToString(Value), 0);
-            if(GetOwner().LocalRole < ENetRole::ROLE_Authority) {
-                Print("Client", 0);
-            } 
-            else
-            {
-                Print("Server", 0);
-            }
         }
     }
 
